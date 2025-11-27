@@ -358,8 +358,38 @@ const GraphVisualization = () => {
                   ((currentStep.edge.from === edge.from && currentStep.edge.to === edge.to) ||
                    (currentStep.edge.from === edge.to && currentStep.edge.to === edge.from));
 
+                // Calculate edge path for particles
+                const pathId = `edge-path-${index}`;
+                const dx = to.x - from.x;
+                const dy = to.y - from.y;
+                const length = Math.sqrt(dx * dx + dy * dy);
+
                 return (
                   <g key={index}>
+                    {/* Define path for particle animation */}
+                    <defs>
+                      <path
+                        id={pathId}
+                        d={`M ${from.x} ${from.y} L ${to.x} ${to.y}`}
+                      />
+                    </defs>
+
+                    {/* Background glow for MST edges */}
+                    {isInMST && (
+                      <line
+                        x1={from.x}
+                        y1={from.y}
+                        x2={to.x}
+                        y2={to.y}
+                        stroke={edgeColor}
+                        strokeWidth={12}
+                        opacity={0.3}
+                        className="animate-glow-pulse"
+                        style={{ color: edgeColor }}
+                      />
+                    )}
+
+                    {/* Main edge line */}
                     <line
                       x1={from.x}
                       y1={from.y}
@@ -367,21 +397,75 @@ const GraphVisualization = () => {
                       y2={to.y}
                       stroke={edgeColor}
                       strokeWidth={isInMST ? 5 : isCurrent ? 4 : edge.isBlocked ? 3 : 2}
-                      strokeDasharray={edge.isBlocked ? "5,5" : "none"}
-                      className={`transition-all duration-500 ${isInMST || isCurrent ? "animate-pulse-slow" : ""}`}
+                      strokeDasharray={
+                        edge.isBlocked ? "5,5" : 
+                        isCurrent ? "10,5" : 
+                        isInMST ? `${length}` : "none"
+                      }
+                      className={`transition-all duration-700 ease-in-out ${
+                        isCurrent ? "animate-edge-flow" : ""
+                      } ${isInMST ? "animate-edge-draw" : ""}`}
                       opacity={!isRunning || isInMST || isCurrent ? 1 : 0.3}
+                      style={{
+                        strokeDashoffset: isInMST ? 0 : undefined,
+                        transition: 'all 0.7s cubic-bezier(0.4, 0, 0.2, 1)'
+                      }}
                     />
-                    {/* Weight label */}
-                    <text
-                      x={(from.x + to.x) / 2}
-                      y={(from.y + to.y) / 2 - 10}
-                      fill="hsl(var(--foreground))"
-                      fontSize="12"
-                      fontWeight="600"
-                      className="select-none"
-                    >
-                      {edge.weight}km
-                    </text>
+
+                    {/* Animated particle traveling along current edge */}
+                    {isCurrent && isAutoPlaying && (
+                      <>
+                        <circle
+                          r="6"
+                          fill={edgeColor}
+                          opacity={0.9}
+                          className="animate-particle-flow"
+                        >
+                          <animateMotion
+                            dur="2s"
+                            repeatCount="indefinite"
+                            path={`M ${from.x} ${from.y} L ${to.x} ${to.y}`}
+                          />
+                        </circle>
+                        <circle
+                          r="4"
+                          fill="hsl(var(--background))"
+                          opacity={0.8}
+                          className="animate-particle-flow"
+                          style={{ animationDelay: '0.3s' }}
+                        >
+                          <animateMotion
+                            dur="2s"
+                            repeatCount="indefinite"
+                            path={`M ${from.x} ${from.y} L ${to.x} ${to.y}`}
+                          />
+                        </circle>
+                      </>
+                    )}
+
+                    {/* Weight label with background */}
+                    <g>
+                      <rect
+                        x={(from.x + to.x) / 2 - 20}
+                        y={(from.y + to.y) / 2 - 22}
+                        width="40"
+                        height="18"
+                        fill="hsl(var(--background))"
+                        opacity={0.9}
+                        rx="4"
+                      />
+                      <text
+                        x={(from.x + to.x) / 2}
+                        y={(from.y + to.y) / 2 - 10}
+                        fill="hsl(var(--foreground))"
+                        fontSize="12"
+                        fontWeight="600"
+                        textAnchor="middle"
+                        className="select-none"
+                      >
+                        {edge.weight}km
+                      </text>
+                    </g>
                   </g>
                 );
               })}
@@ -394,6 +478,46 @@ const GraphVisualization = () => {
 
                 return (
                   <g key={node.id}>
+                    {/* Ripple effect for highlighted nodes */}
+                    {isHighlighted && isAutoPlaying && (
+                      <>
+                        <circle
+                          cx={node.x}
+                          cy={node.y}
+                          r="25"
+                          fill="none"
+                          stroke="hsl(var(--secondary))"
+                          strokeWidth="3"
+                          opacity={0}
+                          className="animate-node-ripple"
+                        />
+                        <circle
+                          cx={node.x}
+                          cy={node.y}
+                          r="25"
+                          fill="none"
+                          stroke="hsl(var(--secondary))"
+                          strokeWidth="3"
+                          opacity={0}
+                          className="animate-node-ripple"
+                          style={{ animationDelay: '0.5s' }}
+                        />
+                      </>
+                    )}
+
+                    {/* Outer glow for highlighted nodes */}
+                    {isHighlighted && (
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r="35"
+                        fill="hsl(var(--secondary))"
+                        opacity={0.2}
+                        className="animate-pulse-slow"
+                      />
+                    )}
+
+                    {/* Main node circle */}
                     <circle
                       cx={node.x}
                       cy={node.y}
@@ -401,8 +525,15 @@ const GraphVisualization = () => {
                       fill={isHighlighted ? "hsl(var(--secondary))" : "hsl(var(--primary))"}
                       stroke="hsl(var(--background))"
                       strokeWidth="3"
-                      className={`drop-shadow-lg transition-all duration-500 ${isHighlighted ? "animate-pulse-slow" : ""}`}
+                      className="drop-shadow-lg transition-all duration-500"
+                      style={{
+                        transform: isHighlighted ? 'scale(1.1)' : 'scale(1)',
+                        transformOrigin: `${node.x}px ${node.y}px`,
+                        transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                      }}
                     />
+
+                    {/* Node ID text */}
                     <text
                       x={node.x}
                       y={node.y}
@@ -415,13 +546,18 @@ const GraphVisualization = () => {
                     >
                       {node.id}
                     </text>
+
+                    {/* Node label */}
                     <text
                       x={node.x}
                       y={node.y + 45}
                       fill="hsl(var(--muted-foreground))"
                       fontSize="11"
                       textAnchor="middle"
-                      className="select-none"
+                      className="select-none transition-all duration-300"
+                      style={{
+                        fontWeight: isHighlighted ? '600' : '400'
+                      }}
                     >
                       {node.label}
                     </text>

@@ -124,3 +124,91 @@ All colors MUST be HSL.
     font-weight: 600;
   }
 }
+
+@layer utilities {
+  /* Graph animation utilities */
+  @keyframes edge-flow {
+    0% {
+      stroke-dashoffset: 20;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes particle-flow {
+    0% {
+      offset-distance: 0%;
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      offset-distance: 100%;
+      opacity: 0;
+    }
+  }
+
+  @keyframes node-ripple {
+    0% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: scale(1.3);
+      opacity: 0.4;
+    }
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% {
+      filter: drop-shadow(0 0 4px currentColor);
+      opacity: 1;
+    }
+    50% {
+      filter: drop-shadow(0 0 12px currentColor);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes edge-draw {
+    0% {
+      stroke-dashoffset: 1000;
+    }
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .animate-edge-flow {
+    animation: edge-flow 1s linear infinite;
+  }
+
+  .animate-particle-flow {
+    animation: particle-flow 2s ease-in-out infinite;
+  }
+
+  .animate-node-ripple {
+    animation: node-ripple 1.5s ease-out infinite;
+  }
+
+  .animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
+
+  .animate-edge-draw {
+    animation: edge-draw 1s ease-out forwards;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
