@@ -1,7 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Navigation, Zap, GitBranch } from "lucide-react";
 
-const Hero = () => {
+interface HeroProps {
+  onExploreClick: () => void;
+  onViewAlgorithmClick: () => void;
+}
+
+const Hero = ({ onExploreClick, onViewAlgorithmClick }: HeroProps) => {
   return (
     <div className="relative overflow-hidden border-b border-border/50 bg-gradient-to-r from-primary/5 via-secondary/5 to-accent/5">
       <div className="container mx-auto px-4 py-20">
@@ -27,6 +32,7 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300"
+              onClick={onExploreClick}
             >
               <Navigation className="w-4 h-4 mr-2" />
               Explore System
@@ -35,6 +41,7 @@ const Hero = () => {
               size="lg" 
               variant="outline"
               className="border-2 hover:bg-accent/10 hover:border-accent transition-all duration-300"
+              onClick={onViewAlgorithmClick}
             >
               <Zap className="w-4 h-4 mr-2" />
               View Algorithm

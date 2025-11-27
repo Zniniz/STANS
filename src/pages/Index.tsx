@@ -32,7 +32,10 @@ const Index = () => {
       </div>
       
       <div className="relative">
-        <Hero />
+        <Hero 
+          onExploreClick={() => setActiveTab("builder")}
+          onViewAlgorithmClick={() => setActiveTab("visualization")}
+        />
         
         <div className="container mx-auto px-4 py-12">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
