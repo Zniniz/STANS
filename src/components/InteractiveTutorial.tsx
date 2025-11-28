@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { X, ChevronRight, ChevronLeft, CheckCircle2, Sparkles } from "lucide-react";
+import { X, ChevronRight, ChevronLeft, CheckCircle2, Sparkles, Move } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Node {
@@ -125,19 +125,8 @@ export const InteractiveTutorial = ({
 }: InteractiveTutorialProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isCompleted, setIsCompleted] = useState(false);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setCurrentStep(0);
-      setIsCompleted(false);
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (currentTab !== "builder" && isOpen && currentStep > 0 && currentStep < tutorialSteps.length - 1) {
-      onTabChange("builder");
-    }
-  }, [currentTab, isOpen, currentStep, onTabChange]);
+  const [arrowPath, setArrowPath] = useState<{ x1: number; y1: number; x2: number; y2: number } | null>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
 
   const step = tutorialSteps[currentStep];
   const progress = ((currentStep + 1) / tutorialSteps.length) * 100;
@@ -146,6 +135,82 @@ export const InteractiveTutorial = ({
     if (!step.validation) return true;
     return step.validation(nodes, edges);
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setCurrentStep(0);
+      setIsCompleted(false);
+      setArrowPath(null);
+    }
+  }, [isOpen]);
+
+  // Calculate arrow path to target element
+  useEffect(() => {
+    if (!isOpen || !step.target) {
+      setArrowPath(null);
+      // Remove highlight from all elements
+      document.querySelectorAll('.tutorial-highlight').forEach((el) => {
+        el.classList.remove('tutorial-highlight');
+      });
+      return;
+    }
+
+    const calculateArrow = () => {
+      const targetElement = document.getElementById(step.target!);
+      const popup = popupRef.current;
+
+      if (!targetElement || !popup) {
+        setArrowPath(null);
+        return;
+      }
+
+      // Add highlight class to target element
+      document.querySelectorAll('.tutorial-highlight').forEach((el) => {
+        el.classList.remove('tutorial-highlight');
+      });
+      targetElement.classList.add('tutorial-highlight');
+
+      const targetRect = targetElement.getBoundingClientRect();
+      const popupRect = popup.getBoundingClientRect();
+
+      // Calculate the center of the popup (left side for arrow origin)
+      const popupX = popupRect.left;
+      const popupY = popupRect.top + popupRect.height / 2;
+
+      // Calculate the closest point on the target element
+      const targetX = targetRect.left + targetRect.width / 2;
+      const targetY = targetRect.top + targetRect.height / 2;
+
+      setArrowPath({
+        x1: popupX,
+        y1: popupY,
+        x2: targetX,
+        y2: targetY,
+      });
+    };
+
+    calculateArrow();
+    window.addEventListener("resize", calculateArrow);
+    window.addEventListener("scroll", calculateArrow);
+
+    const interval = setInterval(calculateArrow, 100);
+
+    return () => {
+      window.removeEventListener("resize", calculateArrow);
+      window.removeEventListener("scroll", calculateArrow);
+      clearInterval(interval);
+      // Cleanup highlight
+      document.querySelectorAll('.tutorial-highlight').forEach((el) => {
+        el.classList.remove('tutorial-highlight');
+      });
+    };
+  }, [isOpen, step.target, currentStep]);
+
+  useEffect(() => {
+    if (currentTab !== "builder" && isOpen && currentStep > 0 && currentStep < tutorialSteps.length - 1) {
+      onTabChange("builder");
+    }
+  }, [currentTab, isOpen, currentStep, onTabChange]);
 
   const handleNext = () => {
     if (currentStep < tutorialSteps.length - 1) {
@@ -172,17 +237,85 @@ export const InteractiveTutorial = ({
 
   return (
     <AnimatePresence>
-      {/* Corner Tutorial Popup - Bottom Right */}
+      {/* Arrow Pointer SVG Overlay */}
+      {arrowPath && (
+        <svg
+          className="fixed inset-0 pointer-events-none z-40"
+          style={{ width: "100vw", height: "100vh" }}
+        >
+          <defs>
+            <marker
+              id="arrowhead"
+              markerWidth="10"
+              markerHeight="10"
+              refX="9"
+              refY="3"
+              orient="auto"
+            >
+              <polygon
+                points="0 0, 10 3, 0 6"
+                fill="hsl(var(--primary))"
+                className="drop-shadow-lg"
+              />
+            </marker>
+          </defs>
+          <motion.path
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            exit={{ pathLength: 0, opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            d={`M ${arrowPath.x1} ${arrowPath.y1} Q ${arrowPath.x1 - 100} ${
+              (arrowPath.y1 + arrowPath.y2) / 2
+            } ${arrowPath.x2} ${arrowPath.y2}`}
+            stroke="hsl(var(--primary))"
+            strokeWidth="3"
+            fill="none"
+            markerEnd="url(#arrowhead)"
+            className="drop-shadow-[0_0_10px_hsl(var(--primary))]"
+            style={{
+              filter: "drop-shadow(0 0 8px hsl(var(--primary) / 0.5))",
+            }}
+          />
+        </svg>
+      )}
+
+      {/* Highlight Target Element */}
+      {step.target && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 pointer-events-none z-30"
+          style={{
+            background: "radial-gradient(circle at var(--spotlight-x) var(--spotlight-y), transparent 150px, rgba(0,0,0,0.3) 300px)",
+          }}
+        />
+      )}
+
+      {/* Draggable Corner Tutorial Popup */}
       <motion.div
+        ref={popupRef}
+        drag
+        dragMomentum={false}
+        dragElastic={0}
+        dragConstraints={{
+          left: 0,
+          right: window.innerWidth - 400,
+          top: 0,
+          bottom: window.innerHeight - 400,
+        }}
         initial={{ opacity: 0, x: 400, y: 100 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         exit={{ opacity: 0, x: 400, y: 100 }}
-        className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)]"
+        className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] cursor-move"
       >
-        <Card className="shadow-2xl border-2 border-primary bg-background backdrop-blur-md">
-          {/* Header */}
-          <div className="p-4 pb-3 space-y-3">
-            <div className="flex items-start justify-between gap-3">
+        <Card className="shadow-2xl border-2 border-primary bg-background backdrop-blur-md cursor-auto">
+          {/* Drag Handle Header */}
+          <div className="p-4 pb-3 space-y-3 cursor-move" onPointerDown={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between gap-2">
+              <div className="p-1.5 rounded-lg bg-muted hover:bg-muted/80 cursor-grab active:cursor-grabbing flex-shrink-0 transition-colors">
+                <Move className="w-4 h-4 text-muted-foreground" />
+              </div>
               <div className="flex items-center gap-2 flex-1 min-w-0">
                 <div className="p-1.5 rounded-lg bg-primary/10 flex-shrink-0">
                   <Sparkles className="w-4 h-4 text-primary" />
@@ -207,8 +340,8 @@ export const InteractiveTutorial = ({
             <Progress value={progress} className="h-1.5" />
             </div>
 
-          {/* Content */}
-          <div className="px-4 pb-4 space-y-3">
+          {/* Content - Non-draggable */}
+          <div className="px-4 pb-4 space-y-3 cursor-auto" onPointerDown={(e) => e.stopPropagation()}>
             <p className="text-sm text-muted-foreground leading-relaxed">
               {step.description}
             </p>
