@@ -237,6 +237,7 @@ const GraphBuilder = ({ nodes, edges, setNodes, setEdges }: GraphBuilderProps) =
                   Add Nodes
                 </Button>
                 <Button
+                  id="edge-mode-button"
                   onClick={() => setMode("edge")}
                   variant={mode === "edge" ? "default" : "outline"}
                   className={mode === "edge" ? "bg-secondary hover:bg-secondary/90" : ""}
@@ -277,7 +278,7 @@ const GraphBuilder = ({ nodes, edges, setNodes, setEdges }: GraphBuilderProps) =
             <Card className="bg-muted/50 border-secondary/50">
               <CardContent className="pt-6">
                 <div className="grid sm:grid-cols-3 gap-4">
-                  <div className="space-y-2">
+                  <div className="space-y-2" id="edge-weight-slider">
                     <Label htmlFor="weight">Edge Weight (km)</Label>
                     <Input
                       id="weight"
@@ -288,7 +289,7 @@ const GraphBuilder = ({ nodes, edges, setNodes, setEdges }: GraphBuilderProps) =
                       onChange={(e) => setEdgeWeight(e.target.value)}
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2" id="traffic-level-slider">
                     <Label htmlFor="traffic">Traffic Level</Label>
                     <Select value={edgeTraffic} onValueChange={(v: any) => setEdgeTraffic(v)}>
                       <SelectTrigger id="traffic">
@@ -327,6 +328,7 @@ const GraphBuilder = ({ nodes, edges, setNodes, setEdges }: GraphBuilderProps) =
           {/* Canvas */}
           <div className="relative bg-card border-2 border-border rounded-lg p-4">
             <svg
+              id="canvas"
               ref={svgRef}
               width="100%"
               height="400"
@@ -463,7 +465,7 @@ const GraphBuilder = ({ nodes, edges, setNodes, setEdges }: GraphBuilderProps) =
           </div>
 
               {/* Stats */}
-              <div className="flex flex-wrap gap-4 text-sm">
+              <div id="graph-stats" className="flex flex-wrap gap-4 text-sm">
                 <Badge variant="outline">
                   <Plus className="w-3 h-3 mr-1" />
                   {nodes.length} Nodes

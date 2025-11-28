@@ -16,8 +16,9 @@ import AnimationRecorder from "@/components/AnimationRecorder";
 import CollaborativeGraph from "@/components/CollaborativeGraph";
 import GraphMetrics from "@/components/GraphMetrics";
 import GraphTemplates from "@/components/GraphTemplates";
+import { InteractiveTutorial } from "@/components/InteractiveTutorial";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { MapPin, Route, AlertTriangle, Hammer, BarChart3, Cpu, Box, Clock, Upload, GraduationCap, Zap, Video, Users, Network, Grid3x3 } from "lucide-react";
+import { MapPin, Route, AlertTriangle, Hammer, BarChart3, Cpu, Box, Clock, Upload, GraduationCap, Zap, Video, Users, Network, Grid3x3, Sparkles } from "lucide-react";
 import type { Edge } from "@/utils/kruskal";
 
 interface Node {
@@ -31,6 +32,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
@@ -38,10 +40,27 @@ const Index = () => {
       <div className="fixed inset-0 pointer-events-none opacity-40" 
            style={{ background: 'var(--gradient-mesh)' }} />
       
-      {/* Theme toggle */}
-      <div className="fixed top-4 right-4 z-50">
+      {/* Theme toggle & Tutorial button */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <button
+          onClick={() => setIsTutorialOpen(true)}
+          className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg flex items-center gap-2 font-medium"
+        >
+          <Sparkles className="w-4 h-4" />
+          Start Tutorial
+        </button>
         <ThemeToggle />
       </div>
+      
+      {/* Interactive Tutorial */}
+      <InteractiveTutorial 
+        isOpen={isTutorialOpen}
+        onClose={() => setIsTutorialOpen(false)}
+        nodes={nodes}
+        edges={edges}
+        currentTab={activeTab}
+        onTabChange={setActiveTab}
+      />
       
       <div className="relative">
         <Hero 
