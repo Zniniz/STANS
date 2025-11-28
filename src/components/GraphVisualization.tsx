@@ -16,7 +16,12 @@ interface Node {
   label: string;
 }
 
-const GraphVisualization = () => {
+interface GraphVisualizationProps {
+  nodes?: Node[];
+  edges?: Edge[];
+}
+
+const GraphVisualization = ({ nodes: propNodes, edges: propEdges }: GraphVisualizationProps) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [steps, setSteps] = useState<KruskalStep[]>([]);
   const [isRunning, setIsRunning] = useState(false);
@@ -24,8 +29,8 @@ const GraphVisualization = () => {
   const [playbackSpeed, setPlaybackSpeed] = useState(1000); // milliseconds per step
   const autoPlayIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sample graph data
-  const nodes: Node[] = [
+  // Use provided nodes/edges or fallback to sample data
+  const defaultNodes: Node[] = [
     { id: "A", x: 100, y: 150, label: "Intersection A" },
     { id: "B", x: 300, y: 100, label: "Intersection B" },
     { id: "C", x: 500, y: 150, label: "Intersection C" },
@@ -33,7 +38,7 @@ const GraphVisualization = () => {
     { id: "E", x: 400, y: 300, label: "Intersection E" },
   ];
 
-  const edges: Edge[] = [
+  const defaultEdges: Edge[] = [
     { from: "A", to: "B", weight: 5, traffic: "low", isBlocked: false },
     { from: "A", to: "D", weight: 8, traffic: "medium", isBlocked: false },
     { from: "B", to: "C", weight: 6, traffic: "high", isBlocked: false },
@@ -42,6 +47,9 @@ const GraphVisualization = () => {
     { from: "D", to: "E", weight: 9, traffic: "medium", isBlocked: true },
     { from: "B", to: "D", weight: 3, traffic: "medium", isBlocked: false },
   ];
+
+  const nodes = propNodes && propNodes.length > 0 ? propNodes : defaultNodes;
+  const edges = propEdges && propEdges.length > 0 ? propEdges : defaultEdges;
 
   const getNodePosition = (nodeId: string) => {
     return nodes.find((n) => n.id === nodeId);

@@ -121,11 +121,11 @@ const Index = () => {
             </TabsContent>
 
             <TabsContent value="visualization">
-              <GraphVisualization />
+              <GraphVisualization nodes={nodes} edges={edges} />
             </TabsContent>
 
             <TabsContent value="calculator">
-              <RouteCalculator />
+              <RouteCalculator nodes={nodes} edges={edges} />
             </TabsContent>
 
             <TabsContent value="builder">
@@ -152,7 +152,7 @@ const Index = () => {
             </TabsContent>
 
             <TabsContent value="comparison">
-              <AlgorithmComparison />
+              <AlgorithmComparison nodes={nodes} edges={edges} />
             </TabsContent>
 
             <TabsContent value="complexity">
@@ -160,7 +160,16 @@ const Index = () => {
             </TabsContent>
 
             <TabsContent value="3d">
-              <Graph3D />
+              <Graph3D graphData={{ 
+                nodes, 
+                edges: edges.map(e => ({
+                  from: e.from,
+                  to: e.to,
+                  weight: e.weight,
+                  traffic: e.traffic === 'low' ? 0.3 : e.traffic === 'medium' ? 0.6 : 0.9,
+                  blocked: e.isBlocked
+                }))
+              }} />
             </TabsContent>
 
             <TabsContent value="history">
@@ -168,7 +177,28 @@ const Index = () => {
             </TabsContent>
 
             <TabsContent value="import">
-              <GraphImport />
+              <GraphImport 
+                onImportGraph={(data) => {
+                  setNodes(data.nodes);
+                  setEdges(data.edges.map(e => ({
+                    from: e.from,
+                    to: e.to,
+                    weight: e.weight,
+                    traffic: e.traffic > 0.6 ? 'high' : e.traffic > 0.3 ? 'medium' : 'low',
+                    isBlocked: e.blocked
+                  })));
+                }}
+                currentGraph={{
+                  nodes,
+                  edges: edges.map(e => ({
+                    from: e.from,
+                    to: e.to,
+                    weight: e.weight,
+                    traffic: e.traffic === 'low' ? 0.3 : e.traffic === 'medium' ? 0.6 : 0.9,
+                    blocked: e.isBlocked
+                  }))
+                }}
+              />
             </TabsContent>
 
             <TabsContent value="educational">

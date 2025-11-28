@@ -6,19 +6,37 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Calculator, MapPin, Navigation2, Clock } from "lucide-react";
 import { toast } from "sonner";
+import type { Edge } from "@/utils/kruskal";
 
-const RouteCalculator = () => {
+interface Node {
+  id: string;
+  x: number;
+  y: number;
+  label: string;
+}
+
+interface RouteCalculatorProps {
+  nodes?: Node[];
+  edges?: Edge[];
+}
+
+const RouteCalculator = ({ nodes: propNodes, edges: propEdges }: RouteCalculatorProps) => {
   const [source, setSource] = useState("");
   const [destination, setDestination] = useState("");
   const [routeCalculated, setRouteCalculated] = useState(false);
 
-  const locations = [
+  // Use provided nodes or fallback to default locations
+  const defaultLocations = [
     "Intersection A",
     "Intersection B",
     "Intersection C",
     "Intersection D",
     "Intersection E",
   ];
+
+  const locations = propNodes && propNodes.length > 0 
+    ? propNodes.map(n => n.label || n.id) 
+    : defaultLocations;
 
   const calculateRoute = () => {
     if (!source || !destination) {

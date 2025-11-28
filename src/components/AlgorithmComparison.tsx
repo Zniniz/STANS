@@ -15,14 +15,19 @@ interface Node {
   label: string;
 }
 
-const AlgorithmComparison = () => {
+interface AlgorithmComparisonProps {
+  nodes?: Node[];
+  edges?: Edge[];
+}
+
+const AlgorithmComparison = ({ nodes: propNodes, edges: propEdges }: AlgorithmComparisonProps) => {
   const [hasRun, setHasRun] = useState(false);
   const [kruskalResult, setKruskalResult] = useState<any>(null);
   const [primResult, setPrimResult] = useState<any>(null);
   const [dijkstraResult, setDijkstraResult] = useState<any>(null);
 
-  // Sample graph data
-  const nodes: Node[] = [
+  // Use provided nodes/edges or fallback to sample data
+  const defaultNodes: Node[] = [
     { id: "A", x: 100, y: 150, label: "A" },
     { id: "B", x: 300, y: 100, label: "B" },
     { id: "C", x: 500, y: 150, label: "C" },
@@ -30,7 +35,7 @@ const AlgorithmComparison = () => {
     { id: "E", x: 400, y: 300, label: "E" },
   ];
 
-  const edges: Edge[] = [
+  const defaultEdges: Edge[] = [
     { from: "A", to: "B", weight: 5, traffic: "low", isBlocked: false },
     { from: "A", to: "D", weight: 8, traffic: "medium", isBlocked: false },
     { from: "B", to: "C", weight: 6, traffic: "high", isBlocked: false },
@@ -39,6 +44,9 @@ const AlgorithmComparison = () => {
     { from: "D", to: "E", weight: 9, traffic: "medium", isBlocked: true },
     { from: "B", to: "D", weight: 3, traffic: "medium", isBlocked: false },
   ];
+
+  const nodes = propNodes && propNodes.length > 0 ? propNodes : defaultNodes;
+  const edges = propEdges && propEdges.length > 0 ? propEdges : defaultEdges;
 
   const runComparison = () => {
     toast.info("Running all algorithms...");
