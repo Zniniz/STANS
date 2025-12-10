@@ -198,8 +198,8 @@ const DijkstraVisualization = ({ nodes: propNodes, edges: propEdges }: DijkstraV
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Source/Target Selection */}
-          <div className="flex flex-wrap gap-4">
-            <div className="flex-1 min-w-[200px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-2">
               <Label htmlFor="source-select">Source Node</Label>
               <Select value={sourceNode} onValueChange={setSourceNode} disabled={isRunning}>
                 <SelectTrigger id="source-select">
@@ -212,14 +212,14 @@ const DijkstraVisualization = ({ nodes: propNodes, edges: propEdges }: DijkstraV
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex-1 min-w-[200px]">
+            <div className="space-y-2">
               <Label htmlFor="target-select">Target Node (Optional)</Label>
-              <Select value={targetNode} onValueChange={setTargetNode} disabled={isRunning}>
+              <Select value={targetNode || "_all_"} onValueChange={(v) => setTargetNode(v === "_all_" ? "" : v)} disabled={isRunning}>
                 <SelectTrigger id="target-select">
                   <SelectValue placeholder="All nodes" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All nodes</SelectItem>
+                  <SelectItem value="_all_">All nodes</SelectItem>
                   {nodes.filter(n => n.id !== sourceNode).map(node => (
                     <SelectItem key={node.id} value={node.id}>{node.id} - {node.label}</SelectItem>
                   ))}
@@ -353,8 +353,8 @@ const DijkstraVisualization = ({ nodes: propNodes, edges: propEdges }: DijkstraV
           </div>
 
           {/* Graph SVG */}
-          <div className="relative bg-card border-2 border-border rounded-lg p-8 min-h-[400px]">
-            <svg width="100%" height="400" className="overflow-visible">
+          <div className="relative bg-card border-2 border-border rounded-lg p-4 sm:p-8 overflow-x-auto">
+            <svg width="100%" height="400" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet" className="min-w-[300px]">
               {/* Draw edges */}
               {edges.map((edge, index) => {
                 const from = getNodePosition(edge.from);

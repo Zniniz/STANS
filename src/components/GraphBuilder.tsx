@@ -326,13 +326,15 @@ const GraphBuilder = ({ nodes, edges, setNodes, setEdges }: GraphBuilderProps) =
           </div>
 
           {/* Canvas */}
-          <div className="relative bg-card border-2 border-border rounded-lg p-4">
+          <div className="relative bg-card border-2 border-border rounded-lg p-2 sm:p-4 overflow-x-auto">
             <svg
               id="canvas"
               ref={svgRef}
               width="100%"
               height="400"
-              className={`overflow-visible ${mode === "node" ? "cursor-crosshair" : "cursor-pointer"}`}
+              viewBox="0 0 600 400"
+              preserveAspectRatio="xMidYMid meet"
+              className={`min-w-[300px] ${mode === "node" ? "cursor-crosshair" : "cursor-pointer"}`}
               onClick={handleSvgClick}
             >
               {/* Draw edges */}
