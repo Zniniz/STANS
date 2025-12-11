@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import Hero from "@/components/Hero";
 import GraphVisualization from "@/components/GraphVisualization";
 import ProjectInfo from "@/components/ProjectInfo";
@@ -16,7 +18,7 @@ import DijkstraVisualization from "@/components/DijkstraVisualization";
 import PrimVisualization from "@/components/PrimVisualization";
 import { InteractiveTutorial } from "@/components/InteractiveTutorial";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { MapPin, Route, AlertTriangle, Hammer, BarChart3, Box, Clock, Upload, GraduationCap, Users, Grid3x3, Sparkles, Navigation, TreeDeciduous } from "lucide-react";
+import { MapPin, Route, AlertTriangle, Hammer, BarChart3, Box, Clock, Upload, GraduationCap, Users, Grid3x3, Sparkles, Navigation, TreeDeciduous, BookOpen } from "lucide-react";
 import type { Edge } from "@/utils/kruskal";
 
 interface Node {
@@ -38,8 +40,14 @@ const Index = () => {
       <div className="fixed inset-0 pointer-events-none opacity-40" 
            style={{ background: 'var(--gradient-mesh)' }} />
       
-      {/* Theme toggle */}
-      <div className="fixed top-4 right-4 z-50">
+      {/* Top Right Actions */}
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
+        <Link to="/docs">
+          <Button variant="outline" size="sm" className="gap-2">
+            <BookOpen className="w-4 h-4" />
+            <span className="hidden sm:inline">Code Docs</span>
+          </Button>
+        </Link>
         <ThemeToggle />
       </div>
       
