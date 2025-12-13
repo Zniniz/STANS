@@ -2,110 +2,161 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Traffic Dashboard Design System */
 
 @layer base {
   :root {
-    --background: 220 25% 98%;
-    --foreground: 215 25% 15%;
+    --background: 220 20% 97%;
+    --foreground: 220 25% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 220 25% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 220 25% 10%;
 
-    --primary: 200 85% 25%;
+    /* Traffic Blue - Primary */
+    --primary: 221 83% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 195 80% 50%;
+    /* Route Green - Secondary */
+    --secondary: 158 64% 40%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 94%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 220 15% 92%;
+    --muted-foreground: 220 10% 45%;
 
-    --accent: 180 85% 55%;
-    --accent-foreground: 215 25% 15%;
+    /* Accent - Navigation */
+    --accent: 221 83% 53%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 50%;
+    /* Warning Amber */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Congestion Red - Destructive */
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 20% 88%;
-    --input: 215 20% 88%;
-    --ring: 200 85% 25%;
+    /* Road Gray */
+    --road: 220 9% 46%;
+    --road-foreground: 0 0% 100%;
+
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 221 83% 53%;
 
     --radius: 0.75rem;
     
-    --traffic-low: 142 76% 45%;
-    --traffic-medium: 38 92% 50%;
-    --traffic-high: 0 70% 50%;
+    /* Traffic status colors */
+    --traffic-clear: 158 64% 40%;
+    --traffic-moderate: 38 92% 50%;
+    --traffic-heavy: 0 72% 51%;
+    --traffic-blocked: 220 9% 46%;
     
-    --gradient-primary: linear-gradient(135deg, hsl(200 85% 25%), hsl(195 80% 40%));
-    --gradient-accent: linear-gradient(135deg, hsl(180 85% 55%), hsl(195 80% 50%));
-    --gradient-mesh: radial-gradient(at 0% 0%, hsl(200 85% 25% / 0.2) 0px, transparent 50%),
-                      radial-gradient(at 100% 100%, hsl(180 85% 55% / 0.15) 0px, transparent 50%);
+    /* Dashboard gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%), hsl(221 83% 40%));
+    --gradient-success: linear-gradient(135deg, hsl(158 64% 40%), hsl(158 64% 30%));
+    --gradient-warning: linear-gradient(135deg, hsl(38 92% 50%), hsl(38 92% 40%));
+    --gradient-danger: linear-gradient(135deg, hsl(0 72% 51%), hsl(0 72% 40%));
+    --gradient-mesh: 
+      radial-gradient(at 0% 0%, hsl(221 83% 53% / 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsl(158 64% 40% / 0.06) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsl(38 92% 50% / 0.04) 0px, transparent 50%);
     
-    --shadow-elevated: 0 10px 30px -5px hsl(200 85% 25% / 0.2);
+    /* City grid pattern */
+    --grid-pattern: repeating-linear-gradient(
+      0deg,
+      hsl(220 15% 88% / 0.3) 0px,
+      hsl(220 15% 88% / 0.3) 1px,
+      transparent 1px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      hsl(220 15% 88% / 0.3) 0px,
+      hsl(220 15% 88% / 0.3) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+    
+    --shadow-elevated: 0 10px 40px -10px hsl(221 83% 53% / 0.25);
+    --shadow-card: 0 4px 20px -5px hsl(220 25% 10% / 0.1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 220 20% 97%;
+    --sidebar-foreground: 220 10% 25%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 94%;
+    --sidebar-accent-foreground: 220 10% 25%;
+    --sidebar-border: 220 15% 88%;
+    --sidebar-ring: 221 83% 53%;
   }
 
   .dark {
-    --background: 215 30% 8%;
-    --foreground: 210 20% 98%;
+    --background: 220 25% 8%;
+    --foreground: 220 15% 95%;
 
-    --card: 215 28% 12%;
-    --card-foreground: 210 20% 98%;
+    --card: 220 25% 12%;
+    --card-foreground: 220 15% 95%;
 
-    --popover: 215 28% 12%;
-    --popover-foreground: 210 20% 98%;
+    --popover: 220 25% 12%;
+    --popover-foreground: 220 15% 95%;
 
-    --primary: 195 80% 50%;
+    --primary: 221 83% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 85% 35%;
+    --secondary: 158 64% 45%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 25% 18%;
-    --muted-foreground: 215 10% 65%;
+    --muted: 220 20% 18%;
+    --muted-foreground: 220 10% 60%;
 
-    --accent: 180 85% 55%;
-    --accent-foreground: 215 30% 8%;
+    --accent: 221 83% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 50%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 25% 20%;
-    --input: 215 25% 20%;
-    --ring: 195 80% 50%;
+    --road: 220 9% 55%;
+    --road-foreground: 0 0% 100%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 221 83% 60%;
     
-    --gradient-mesh: radial-gradient(at 0% 0%, hsl(195 80% 50% / 0.15) 0px, transparent 50%),
-                      radial-gradient(at 100% 100%, hsl(180 85% 55% / 0.1) 0px, transparent 50%);
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --gradient-mesh: 
+      radial-gradient(at 0% 0%, hsl(221 83% 60% / 0.12) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, hsl(158 64% 45% / 0.08) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, hsl(38 92% 55% / 0.06) 0px, transparent 50%);
+    
+    --grid-pattern: repeating-linear-gradient(
+      0deg,
+      hsl(220 20% 20% / 0.4) 0px,
+      hsl(220 20% 20% / 0.4) 1px,
+      transparent 1px,
+      transparent 40px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      hsl(220 20% 20% / 0.4) 0px,
+      hsl(220 20% 20% / 0.4) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+
+    --sidebar-background: 220 25% 10%;
+    --sidebar-foreground: 220 15% 90%;
+    --sidebar-primary: 221 83% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 220 20% 16%;
+    --sidebar-accent-foreground: 220 15% 90%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 221 83% 60%;
   }
 }
 
@@ -126,7 +177,25 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  /* Graph animation utilities */
+  /* Traffic flow animation - cars moving on roads */
+  @keyframes traffic-flow {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(400%);
+    }
+  }
+
+  @keyframes traffic-flow-slow {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(400%);
+    }
+  }
+
   @keyframes edge-flow {
     0% {
       stroke-dashoffset: 20;
@@ -188,6 +257,46 @@ All colors MUST be HSL.
     }
   }
 
+  @keyframes route-pulse {
+    0%, 100% {
+      stroke-width: 4;
+      filter: drop-shadow(0 0 6px hsl(var(--primary)));
+    }
+    50% {
+      stroke-width: 6;
+      filter: drop-shadow(0 0 12px hsl(var(--primary)));
+    }
+  }
+
+  @keyframes signal-blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes wave-expand {
+    0% {
+      transform: scale(0);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+
+  @keyframes status-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 currentColor;
+    }
+    50% {
+      box-shadow: 0 0 0 8px transparent;
+    }
+  }
+
   .animate-edge-flow {
     animation: edge-flow 1s linear infinite;
   }
@@ -210,6 +319,61 @@ All colors MUST be HSL.
 
   .animate-pulse-slow {
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-route-pulse {
+    animation: route-pulse 1.5s ease-in-out infinite;
+  }
+
+  .animate-signal-blink {
+    animation: signal-blink 1s ease-in-out infinite;
+  }
+
+  .animate-wave-expand {
+    animation: wave-expand 2s ease-out infinite;
+  }
+
+  .animate-traffic-flow {
+    animation: traffic-flow 3s linear infinite;
+  }
+
+  .animate-traffic-flow-slow {
+    animation: traffic-flow-slow 6s linear infinite;
+  }
+
+  /* City grid background */
+  .city-grid {
+    background-image: var(--grid-pattern);
+    background-size: 40px 40px;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Dashboard card styling */
+  .dashboard-card {
+    @apply rounded-xl border bg-card shadow-sm;
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Traffic status indicators */
+  .status-clear {
+    @apply text-secondary;
+    --status-color: hsl(var(--traffic-clear));
+  }
+
+  .status-moderate {
+    color: hsl(var(--warning));
+    --status-color: hsl(var(--warning));
+  }
+
+  .status-heavy {
+    @apply text-destructive;
+    --status-color: hsl(var(--traffic-heavy));
   }
 
   /* Tutorial target highlighting */
