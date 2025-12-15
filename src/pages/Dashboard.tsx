@@ -124,13 +124,18 @@ const Dashboard = () => {
       />
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden relative">
-        {/* Left Sidebar - Controls */}
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+        {/* Left Sidebar - Controls (Hidden on mobile, toggle on tablet+) */}
         <aside 
-          className={`${leftSidebarOpen ? 'w-80' : 'w-0'} transition-all duration-300 border-r border-border bg-card/50 backdrop-blur-sm overflow-hidden flex-shrink-0`}
+          className={`
+            ${leftSidebarOpen ? 'w-full lg:w-72 xl:w-80' : 'w-0'} 
+            transition-all duration-300 border-b lg:border-b-0 lg:border-r border-border 
+            bg-card/50 backdrop-blur-sm overflow-hidden flex-shrink-0
+            ${leftSidebarOpen ? 'max-h-[50vh] lg:max-h-full' : 'max-h-0 lg:max-h-full'}
+          `}
         >
           <ScrollArea className="h-full">
-            <div className="p-4 space-y-4">
+            <div className="p-3 lg:p-4 space-y-3 lg:space-y-4">
               {/* Traffic Simulator */}
               <TrafficSimulator
                 isSimulating={isSimulating}
@@ -160,60 +165,60 @@ const Dashboard = () => {
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm font-medium">Quick Actions</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
+                <CardContent className="grid grid-cols-2 lg:grid-cols-1 gap-2">
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full justify-start"
+                    className="w-full justify-start text-xs lg:text-sm"
                     onClick={() => setActiveTab("builder")}
                   >
-                    <Hammer className="w-4 h-4 mr-2" />
-                    Build Custom Network
+                    <Hammer className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Build Network</span>
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full justify-start"
+                    className="w-full justify-start text-xs lg:text-sm"
                     onClick={() => setActiveTab("templates")}
                   >
-                    <Grid3x3 className="w-4 h-4 mr-2" />
-                    Load Template
+                    <Grid3x3 className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Load Template</span>
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full justify-start"
+                    className="w-full justify-start text-xs lg:text-sm"
                     onClick={() => setActiveTab("import")}
                   >
-                    <Upload className="w-4 h-4 mr-2" />
-                    Import/Export
+                    <Upload className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Import/Export</span>
                   </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    className="w-full justify-start"
+                    className="w-full justify-start text-xs lg:text-sm"
                     onClick={() => setActiveTab("learn")}
                   >
-                    <GraduationCap className="w-4 h-4 mr-2" />
-                    Learn Mode
+                    <GraduationCap className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Learn Mode</span>
                   </Button>
                   <Button 
                     variant="default" 
                     size="sm" 
-                    className="w-full justify-start"
+                    className="w-full justify-start text-xs lg:text-sm"
                     onClick={() => setIsTutorialOpen(true)}
                   >
-                    <Sparkles className="w-4 h-4 mr-2" />
-                    Start Tutorial
+                    <Sparkles className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Start Tutorial</span>
                   </Button>
                   <Link to="/concepts" className="block">
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="w-full justify-start"
+                      className="w-full justify-start text-xs lg:text-sm"
                     >
-                      <BookOpen className="w-4 h-4 mr-2" />
-                      DSA Guide
+                      <BookOpen className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <span className="truncate">DSA Guide</span>
                     </Button>
                   </Link>
                 </CardContent>
@@ -225,53 +230,72 @@ const Dashboard = () => {
         {/* Toggle Left Sidebar */}
         <button
           onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
-          className="absolute top-1/2 -translate-y-1/2 z-20 bg-card border border-border rounded-r-lg p-1 hover:bg-muted transition-colors"
-          style={{ left: leftSidebarOpen ? '320px' : '0' }}
+          className="hidden lg:block absolute top-1/2 -translate-y-1/2 z-20 bg-card border border-border rounded-r-lg p-1 hover:bg-muted transition-colors"
+          style={{ left: leftSidebarOpen ? '288px' : '0' }}
         >
           {leftSidebarOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </button>
 
+        {/* Mobile Sidebar Toggles */}
+        <div className="lg:hidden flex border-b border-border bg-card/30 backdrop-blur-sm">
+          <button
+            onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
+            className="flex-1 py-2 px-4 text-xs font-medium flex items-center justify-center gap-2 hover:bg-muted transition-colors"
+          >
+            {leftSidebarOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+            Controls
+          </button>
+          <div className="w-px bg-border" />
+          <button
+            onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+            className="flex-1 py-2 px-4 text-xs font-medium flex items-center justify-center gap-2 hover:bg-muted transition-colors"
+          >
+            Metrics
+            {rightSidebarOpen ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
+        </div>
+
         {/* Center - Main Visualization */}
         <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <div className="border-b border-border px-4 py-2 bg-card/30 backdrop-blur-sm">
-              <TabsList className="h-9">
-                <TabsTrigger value="map" className="text-xs gap-1.5">
-                  <Network className="w-3.5 h-3.5" />
-                  Traffic Map
+            <div className="border-b border-border px-2 md:px-4 py-2 bg-card/30 backdrop-blur-sm overflow-x-auto">
+              <TabsList className="h-auto flex flex-wrap gap-1 bg-transparent p-0">
+                <TabsTrigger value="map" className="text-[10px] md:text-xs gap-1 px-2 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Network className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  <span className="hidden sm:inline">Traffic</span> Map
                 </TabsTrigger>
-                <TabsTrigger value="kruskal" className="text-xs gap-1.5">
-                  <Route className="w-3.5 h-3.5" />
-                  Kruskal's MST
+                <TabsTrigger value="kruskal" className="text-[10px] md:text-xs gap-1 px-2 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Route className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  Kruskal's
                 </TabsTrigger>
-                <TabsTrigger value="dijkstra" className="text-xs gap-1.5">
-                  <Navigation className="w-3.5 h-3.5" />
-                  Dijkstra's Path
+                <TabsTrigger value="dijkstra" className="text-[10px] md:text-xs gap-1 px-2 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Navigation className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  Dijkstra's
                 </TabsTrigger>
-                <TabsTrigger value="prim" className="text-xs gap-1.5">
-                  <TreeDeciduous className="w-3.5 h-3.5" />
-                  Prim's MST
+                <TabsTrigger value="prim" className="text-[10px] md:text-xs gap-1 px-2 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <TreeDeciduous className="w-3 h-3 md:w-3.5 md:h-3.5" />
+                  Prim's
                 </TabsTrigger>
-                <TabsTrigger value="builder" className="text-xs gap-1.5">
-                  <Hammer className="w-3.5 h-3.5" />
+                <TabsTrigger value="builder" className="text-[10px] md:text-xs gap-1 px-2 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Hammer className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   Builder
                 </TabsTrigger>
-                <TabsTrigger value="templates" className="text-xs gap-1.5">
-                  <Grid3x3 className="w-3.5 h-3.5" />
+                <TabsTrigger value="templates" className="text-[10px] md:text-xs gap-1 px-2 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Grid3x3 className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   Templates
                 </TabsTrigger>
-                <TabsTrigger value="import" className="text-xs gap-1.5">
-                  <Upload className="w-3.5 h-3.5" />
+                <TabsTrigger value="import" className="text-[10px] md:text-xs gap-1 px-2 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <Upload className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   Import
                 </TabsTrigger>
-                <TabsTrigger value="learn" className="text-xs gap-1.5">
-                  <GraduationCap className="w-3.5 h-3.5" />
+                <TabsTrigger value="learn" className="text-[10px] md:text-xs gap-1 px-2 py-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                  <GraduationCap className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   Learn
                 </TabsTrigger>
               </TabsList>
             </div>
 
-            <div className="flex-1 overflow-auto p-4">
+            <div className="flex-1 overflow-auto p-2 md:p-4">
               <TabsContent value="map" className="m-0 h-full">
                 <TrafficMapCanvas
                   nodes={nodes}
@@ -351,21 +375,26 @@ const Dashboard = () => {
           </Tabs>
         </main>
 
-        {/* Toggle Right Sidebar */}
+        {/* Toggle Right Sidebar (Desktop only) */}
         <button
           onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
-          className="absolute top-1/2 -translate-y-1/2 z-20 bg-card border border-border rounded-l-lg p-1 hover:bg-muted transition-colors"
-          style={{ right: rightSidebarOpen ? '320px' : '0' }}
+          className="hidden lg:block absolute top-1/2 -translate-y-1/2 z-20 bg-card border border-border rounded-l-lg p-1 hover:bg-muted transition-colors"
+          style={{ right: rightSidebarOpen ? '288px' : '0' }}
         >
           {rightSidebarOpen ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
 
         {/* Right Sidebar - Metrics & Insights */}
         <aside 
-          className={`${rightSidebarOpen ? 'w-80' : 'w-0'} transition-all duration-300 border-l border-border bg-card/50 backdrop-blur-sm overflow-hidden flex-shrink-0`}
+          className={`
+            ${rightSidebarOpen ? 'w-full lg:w-72 xl:w-80' : 'w-0'} 
+            transition-all duration-300 border-t lg:border-t-0 lg:border-l border-border 
+            bg-card/50 backdrop-blur-sm overflow-hidden flex-shrink-0
+            ${rightSidebarOpen ? 'max-h-[50vh] lg:max-h-full' : 'max-h-0 lg:max-h-full'}
+          `}
         >
           <ScrollArea className="h-full">
-            <div className="p-4">
+            <div className="p-3 lg:p-4">
               <SystemDashboard
                 nodes={nodes}
                 edges={edges}
