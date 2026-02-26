@@ -27,6 +27,8 @@ This system develops a map guidance platform utilizing **Kruskal's algorithm** t
 - Framer Motion (Animations)
 - Recharts (Data Visualization)
 
+![Alt](https://repobeats.axiom.co/api/embed/a30bbe6fff62957b3cce362eef11556425224647.svg "Repobeats analytics image")
+
 ## Demo
 
 
