@@ -29,7 +29,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with: 
-          node-versions: '20'
+          node-version: '20'
           cache: 'npm'
 
       - name: Install dependencies
@@ -41,7 +41,7 @@ jobs:
 
 # JOB 2 — Docker: build image and push to Docker Hub
   docker:
-    needs: validate
+    needs: lint-and-tests
     runs-on: ubuntu-latest
     
     # only push from main not PR
@@ -70,7 +70,7 @@ jobs:
   deploy:
     needs: docker
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: false && github.ref == 'refs/heads/main'
 
     steps:
       - name: Deploy to server via SSH
