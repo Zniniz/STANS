@@ -25,6 +25,15 @@ COPY nginx.conf /etc/nginx/conf.d/app.conf
 # Note: If your build outputs to 'build' instead of 'dist', change the path below
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+
+#   - check every 30 seconds
+#   - fail the check if no response within 5 seconds
+#   - give nginx 10 seconds to boot before checks begin
+#   - mark unhealthy only after 3 consecutive failures
+# wget is built into alpine — no extra packages needed
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://localhost:80/ || exit 1
+
 # Expose port 80 to the outside world
 EXPOSE 80
 

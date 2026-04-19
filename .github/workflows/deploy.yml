@@ -18,7 +18,7 @@ permissions:
 
 # JOB 1 — Validate the app actually builds
 jobs:
-  lint-and-tests:
+  variable:
     runs-on: ubuntu-latest
 
     steps:
@@ -40,7 +40,7 @@ jobs:
 
 # JOB 2 — Docker: build image and push to Docker Hub
   docker:
-    needs: lint-and-tests
+    needs: variable
     runs-on: ubuntu-latest
     
     # only push from main not PR

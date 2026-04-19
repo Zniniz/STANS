@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+
+  # ── STANS application ─────────────────────────────────────────
+  stans:
+    image: notnani/stans-app:latest
+    container_name: stans
+    restart: always
+
+    ports:
+      - "8080:80"
+
+    # Resource limits — prevents container consuming all server RAM/CPU
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: "0.5"
+
+    # Health check mirrors what's in the Dockerfile.
+    # docker-compose uses this to decide when the container is ready
+    # before dependent services start.
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+    # Log rotation — prevents disk filling up
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
