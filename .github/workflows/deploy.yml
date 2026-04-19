@@ -19,7 +19,6 @@ permissions:
 # JOB 1 — Validate the app actually builds
 jobs:
   lint-and-tests:
-    name: Run Automated Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -70,7 +69,7 @@ jobs:
   deploy:
     needs: docker
     runs-on: ubuntu-latest
-    if: false && github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
 
     steps:
       - name: Deploy to server via SSH
