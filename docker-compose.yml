@@ -7,7 +7,7 @@ services:
     container_name: stans-1
     restart: always
     ports:
-      - "8081:80"          # each instance gets a unique host port
+      - "8080:80"          # each instance gets a unique host port
     deploy:
       resources:
         limits:
