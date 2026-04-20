@@ -1,0 +1,50 @@
+# Promtaoil (Log Collector)
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml    # tracks how far through each log file we've read
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push    # sends logs to Loki service
+
+scrape_configs:
+
+  # Scrape all Docker container logs
+  - job_name: containers
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: containerlogs
+          __path__: /var/lib/docker/containers/*/*log  # path to all container log files
+
+    pipeline_stages:
+
+      # Parse the Docker JSON log format
+      - json:
+          expressions:
+            output: log          # the actual log message
+            stream: stream       # stdout or stderr
+            attrs:               # container metadata
+
+      # Extract the container name from the filename path
+      - regex:
+          expression: '/var/lib/docker/containers/(?P<container_id>[^/]+)/.*'
+          source: filename
+
+      # Add useful labels to every log entry
+      - labels:
+          stream:
+          container_id:
+
+      # Use the timestamp from the log entry itself
+      - timestamp:
+          source: time
+          format: RFC3339Nano
+
+      # Set the final log message content
+      - output:
+          source: output
