@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 .env
 *.pem
+
+terraform/terraform.tfvars
+terraform/.terraform
+terraform/*.tfstate*

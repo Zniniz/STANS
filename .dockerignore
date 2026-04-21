@@ -5,3 +5,7 @@ dist
 .env.local
 *.log
 *.pem
+
+terraform/terraform.tfvars
+terraform/.terraform
+terraform/*.tfstate*

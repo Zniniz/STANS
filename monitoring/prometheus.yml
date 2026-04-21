@@ -20,7 +20,4 @@ scrape_configs:
     static_configs:
       - targets: ["node-exporter:9100"]
 
-# Individual STANS instances — track per-instance health
-  - job_name: "stans"
-    static_configs:
-      - targets: ["stans-1:80", "stans-2:80", "stans-3:80"]
+
