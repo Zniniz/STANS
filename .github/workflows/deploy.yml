@@ -1,6 +1,6 @@
 name: Build & Deploy STANS
 
-# 1. Smarter Triggers: Run on main pushes, version tags, AND pull requests
+# Smarter Triggers: Run on main pushes, version tags, AND pull requests
 on:
   push:
     branches: [ "main" ]
@@ -16,11 +16,10 @@ permissions:
   packages: write
   security-events: write
 
-# JOB 1 — Validate the app actually builds
 jobs:
-  variable:
+  # JOB 1 — Validate the app actually builds
+  build-and-test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,15 +36,12 @@ jobs:
       - name: Build application
         run: npm run build
 
-
-# JOB 2 — Docker: build image and push to Docker Hub
+  # JOB 2 — Docker: build image and push to Docker Hub
   docker:
-    needs: variable
+    needs: build-and-test
     runs-on: ubuntu-latest
-    
     # only push from main not PR
     if: github.ref == 'refs/heads/main'   
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -65,31 +61,11 @@ jobs:
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
 
-# JOB 3 — Deploy: SSH into server and restart the container
-  deploy:
+  # JOB 3 — Kubernetes Deploy (Zero Downtime)
+  deploy-k8s:
     needs: docker
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Deploy to server via SSH
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /home/ubuntu/stans
-            git pull origin main
-            docker compose pull
-            docker compose up -d --remove-orphans
-
-# JOB 4 — Kubernetes deploys
-  deploy:
-    needs: docker
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
     steps:
       - name: Deploy to Kubernetes via SSH
         uses: appleboy/ssh-action@v1
@@ -98,11 +74,17 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            # Rolling update — pulls new image and replaces pods one by one
-            # Zero downtime: readiness probe ensures old pod stays up until new one is ready
+            # 1. Pull the latest infrastructure files from GitHub
+            cd /home/ubuntu/stans
+            git pull origin main
+            
+            # 2. Apply any changes made to the k8s config files (like HPA or Ingress)
+            kubectl apply -f k8s/
+
+            # 3. Rolling update — zero downtime pod replacement with the new image
             kubectl set image deployment/stans \
               stans=${{ env.IMAGE_NAME }}:${{ github.sha }} \
               -n stans
 
-            # Wait for rollout to complete
+            # 4. Wait for rollout to complete safely
             kubectl rollout status deployment/stans -n stans --timeout=120s
