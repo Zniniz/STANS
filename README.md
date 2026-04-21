@@ -1,4 +1,7 @@
 # STANS — Smart Traffic-Aware Navigation System
+---
+## View full [DOCUMENTATION](docs/assets.md)
+---
 ### DevOps Deployment Guide
 
 A full DevOps pipeline for a React/TypeScript application — containerized with Docker, automated with GitHub Actions CI/CD, and deployed to AWS EC2 with SSL.
