@@ -28,3 +28,6 @@ dist-ssr
 terraform/terraform.tfvars
 terraform/.terraform
 terraform/*.tfstate*
+terraform/*.tfstate
+*.tfstate*
+*.tfstate.backup

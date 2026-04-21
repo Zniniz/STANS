@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stans
+  namespace: stans
+  annotations:
+    # k3s uses Traefik as default ingress controller
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    # Automatically get Let's Encrypt certificate
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - stans.zniniz.org
+      secretName: stans-tls
+  rules:
+    - host: stans.zniniz.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: stans
+                port:
+                  number: 80

@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stans
+  namespace: stans
+  labels:
+    app: stans
+spec:
+  replicas: 3          # 3 instances, replaces our 3 docker-compose services
+
+  selector:
+    matchLabels:
+      app: stans
+
+  # Rolling update strategy, replaces pods one at a time
+  # ensures zero downtime during deploys
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1        # can temporarily have 4 pods during update
+      maxUnavailable: 0  # never go below 3 healthy pods
+
+  template:
+    metadata:
+      labels:
+        app: stans
+    spec:
+      containers:
+        - name: stans
+          image: notnani/stans-app:latest
+          ports:
+            - containerPort: 80
+
+          # Resource limits per pod
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "300m"
+
+          # Liveness probe, restarts pod if this fails
+          # Equivalent to HEALTHCHECK in Dockerfile
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          # Readiness probe, only send traffic when this passes
+          # Pod won't receive requests until nginx is fully ready
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3

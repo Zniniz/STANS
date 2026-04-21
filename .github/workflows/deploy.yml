@@ -83,3 +83,26 @@ jobs:
             git pull origin main
             docker compose pull
             docker compose up -d --remove-orphans
+
+# JOB 4 — Kubernetes deploys
+  deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy to Kubernetes via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            # Rolling update — pulls new image and replaces pods one by one
+            # Zero downtime: readiness probe ensures old pod stays up until new one is ready
+            kubectl set image deployment/stans \
+              stans=${{ env.IMAGE_NAME }}:${{ github.sha }} \
+              -n stans
+
+            # Wait for rollout to complete
+            kubectl rollout status deployment/stans -n stans --timeout=120s
